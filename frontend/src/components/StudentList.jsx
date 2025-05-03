@@ -9,21 +9,17 @@ import {
   Col,
 } from "react-bootstrap";
 import Swal from "sweetalert2";
-import { deleteStudent, getStudents} from "../api";
+import { deleteStudent, getStudents } from "../api";
 import StudentForm from "./StudentForm";
-import EditStudentForm from "./EditStudentForm"; 
+import EditStudentForm from "./EditStudentForm";
 import MarksModal from "./MarksModal";
-
-
 
 const StudentList = () => {
   const [students, setStudents] = useState([]);
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
-  
   const [totalPages, setTotalPages] = useState(5);
   const [totalEntries, setTotalEntries] = useState(0);
-  
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredStudents, setFilteredStudents] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -41,7 +37,7 @@ const StudentList = () => {
     setShowEditModal(true);
   };
 
-   const handleShowMarksModal = (studentId) => {
+  const handleShowMarksModal = (studentId) => {
     setSelectedStudentId(studentId);
     setShowMarksModal(true);
   };
@@ -51,7 +47,6 @@ const StudentList = () => {
     setSelectedStudentId(null);
   };
 
-  
   const fetchStudents = useCallback(async () => {
     try {
       const data = await getStudents(page, limit);
@@ -104,101 +99,101 @@ const StudentList = () => {
     });
   };
 
-
   const handlePagination = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
     }
   };
+
   return (
-    <Container className="p-4" style={{ height: "100vh", width: "100vw" }}>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h4>Student List</h4>
-        <Button variant="success" onClick={handleShowAdd}>
-          + Add New Member
-        </Button>
-      </div>
+    <Container fluid className="py-4">
+      <Row className="justify-content-between align-items-center mb-3">
+        <Col xs={12} md={6}>
+          <h4>Student List</h4>
+        </Col>
+        <Col xs={12} md={6} className="text-md-end mt-2 mt-md-0">
+          <Button variant="success" onClick={handleShowAdd}>
+            + Add New Member
+          </Button>
+        </Col>
+      </Row>
 
-      <Form className="mb-3 w-50">
-        <Form.Control
-          type="text"
-          placeholder="Search by Name or Email"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </Form>
+      <Row className="mb-3">
+        <Col xs={12} md={6}>
+          <Form.Control
+            type="text"
+            placeholder="Search by Name or Email"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </Col>
+      </Row>
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Member Name</th>
-            <th>Member Email</th>
-            <th>Age</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {filteredStudents.length > 0 ? (
-            filteredStudents.map((student) => (
-              <tr key={student.id}>
-                <td>{student.id}</td>
-                <td>{student.name}</td>
-                <td>{student.email}</td>
-                <td>{student.age}</td>
-                <td>
-                  <Button
-                    variant="warning"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleShowEdit(student)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleDelete(student.id)}
-                  >
-                    Delete
-                  </Button>
-
-                  <Button
-                    variant="info"
-                    size="sm"
-                    onClick={() => handleShowMarksModal(student.id)}
-                  >
-                    View Marks
-                  </Button>
+      <div className="table-responsive">
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Member Name</th>
+              <th>Member Email</th>
+              <th>Age</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredStudents.length > 0 ? (
+              filteredStudents.map((student) => (
+                <tr key={student.id}>
+                  <td>{student.id}</td>
+                  <td>{student.name}</td>
+                  <td>{student.email}</td>
+                  <td>{student.age}</td>
+                  <td>
+                    <div className="d-flex flex-wrap gap-2">
+                      <Button
+                        variant="warning"
+                        size="sm"
+                        onClick={() => handleShowEdit(student)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDelete(student.id)}
+                      >
+                        Delete
+                      </Button>
+                      <Button
+                        variant="info"
+                        size="sm"
+                        onClick={() => handleShowMarksModal(student.id)}
+                      >
+                        View Marks
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center">
+                  No members found
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="5" className="text-center">
-                No members found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
+            )}
+          </tbody>
+        </Table>
+      </div>
 
-      {/* Pagination & Total Entries */}
-      <Row className="d-flex justify-content-between align-items-center mt-4">
-        <Col md={6}>
-          <div
-            className="border p-2 text-start bg-light rounded"
-            style={{ width: "150px" }}
-          >
-            <span className="text-muted">Total Entries: {totalEntries}</span>
-          </div>
+      <Row className="mt-3 align-items-center">
+        <Col xs={12} md={6} className="mb-2 mb-md-0">
+          <span className="text-muted">Total Entries: {totalEntries}</span>
         </Col>
-
-        <Col md={6} className="text-end">
+        <Col xs={12} md={6} className="text-md-end">
           <Button
             variant="secondary"
+            size="sm"
             disabled={page === 1}
             onClick={() => handlePagination(page - 1)}
           >
@@ -209,6 +204,7 @@ const StudentList = () => {
           </span>
           <Button
             variant="secondary"
+            size="sm"
             disabled={page === totalPages}
             onClick={() => handlePagination(page + 1)}
           >
@@ -217,12 +213,10 @@ const StudentList = () => {
         </Col>
       </Row>
 
-      {/* Add Student Modal */}
+      {/* Modals */}
       <Modal show={showAddModal} onHide={handleCloseAdd} centered>
         <Modal.Header closeButton>
-          <Modal.Title
-            style={{ textAlign: "center", color: "green", width: "100%" }}
-          >
+          <Modal.Title className="text-success text-center w-100">
             Add New Member
           </Modal.Title>
         </Modal.Header>
@@ -234,12 +228,9 @@ const StudentList = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Edit Student Modal */}
       <Modal show={showEditModal} onHide={handleCloseEdit} centered>
         <Modal.Header closeButton>
-          <Modal.Title
-            style={{ textAlign: "center", color: "green", width: "100%" }}
-          >
+          <Modal.Title className="text-success text-center w-100">
             Edit Member
           </Modal.Title>
         </Modal.Header>
@@ -254,7 +245,6 @@ const StudentList = () => {
         </Modal.Body>
       </Modal>
 
-      {/* Marks Modal */}
       <MarksModal
         show={showMarksModal}
         studentId={selectedStudentId}

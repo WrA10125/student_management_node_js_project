@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Form, Modal, Table } from "react-bootstrap";
+import { Button, Form, Modal, Table, Row, Col } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { addMark, deleteMark, getMarksByStudentId } from "../api";
 import EditMarksForm from "./EditMarksForm";
@@ -14,7 +14,6 @@ const MarksModal = ({ studentId, show, onHide }) => {
     if (!studentId) return;
     try {
       const data = await getMarksByStudentId(studentId);
-      console.log("Fetched marks:", data);
       setMarks(data || []);
     } catch (error) {
       Swal.fire("Error", error.message || "Failed to fetch marks", "error");
@@ -22,9 +21,7 @@ const MarksModal = ({ studentId, show, onHide }) => {
   }, [studentId]);
 
   useEffect(() => {
-    if (show && studentId) {
-      fetchMarks();
-    }
+    if (show && studentId) fetchMarks();
   }, [show, studentId, fetchMarks]);
 
   useEffect(() => {
@@ -49,6 +46,7 @@ const MarksModal = ({ studentId, show, onHide }) => {
       Swal.fire("Error", error.message || "Failed to add mark", "error");
     }
   };
+
   const handleDeleteMark = async (id) => {
     Swal.fire({
       icon: "warning",
@@ -75,87 +73,91 @@ const MarksModal = ({ studentId, show, onHide }) => {
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
       <Modal.Header closeButton>
-        <Modal.Title
-          style={{ textAlign: "center", color: "green", width: "100%" }}
-        >
+        <Modal.Title className="w-100 text-center text-success">
           Student Subjects Marks
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {marks.length > 0 ? (
-          <Table
-            style={{
-              backgroundColor: "#343a40",
-              color: "white",
-              textAlign: "center",
-            }}
-            striped
-            bordered
-            hover
-            responsive
-          >
-            <thead>
-              <tr>
-                <th>Subject</th>
-                <th>Score</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {marks.map((mark) => (
-                <tr key={mark.id}>
-                  <td>{mark.subject}</td>
-                  <td>{mark.score}</td>
-                  <td>
-                    <Button
-                      variant="warning"
-                      size="sm"
-                      onClick={() => setEditMark(mark)}
-                    >
-                      Edit
-                    </Button>{" "}
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleDeleteMark(mark.id)}
-                    >
-                      Delete
-                    </Button>
-                  </td>
+          <div className="table-responsive mb-4">
+            <Table
+              striped
+              bordered
+              hover
+              responsive
+              className="text-center align-middle"
+              style={{ backgroundColor: "#343a40", color: "white" }}
+            >
+              <thead>
+                <tr>
+                  <th>Subject</th>
+                  <th>Score</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {marks.map((mark) => (
+                  <tr key={mark.id}>
+                    <td>{mark.subject}</td>
+                    <td>{mark.score}</td>
+                    <td>
+                      <Button
+                        variant="warning"
+                        size="sm"
+                        onClick={() => setEditMark(mark)}
+                        className="me-2"
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDeleteMark(mark.id)}
+                      >
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         ) : (
-          <p>No marks available</p>
+          <p className="text-center">No marks available</p>
         )}
 
-        <h5 style={{ textAlign: "center", color: "green", width: "100%" }}>
-          Add New Subject Marks
-        </h5>
+        <h5 className="text-center text-success mb-3">Add New Subject Marks</h5>
         <Form>
-          <Form.Group>
-            <Form.Label>Subject</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter subject"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Score</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter score"
-              value={score}
-              min="0"
-              onChange={(e) => setScore(e.target.value)}
-            />
-          </Form.Group>
-          <Button variant="success" className="mt-2" onClick={handleAddMark}>
-            Add Mark
-          </Button>
+          <Row className="mb-3">
+            <Col xs={12} md={6}>
+              <Form.Group controlId="formSubject">
+                <Form.Label>Subject</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter subject"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={6}>
+              <Form.Group controlId="formScore">
+                <Form.Label>Score</Form.Label>
+                <Form.Control
+                  type="number"
+                  min="0"
+                  placeholder="Enter score"
+                  value={score}
+                  onChange={(e) => setScore(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <div className="text-center">
+            <Button variant="success" onClick={handleAddMark}>
+              Add Mark
+            </Button>
+          </div>
         </Form>
 
         {/* Edit Marks Modal */}
@@ -164,7 +166,7 @@ const MarksModal = ({ studentId, show, onHide }) => {
             show={!!editMark}
             mark={editMark}
             onClose={() => setEditMark(null)}
-            onUpdate={fetchMarks} // Refresh marks after update
+            onUpdate={fetchMarks}
           />
         )}
       </Modal.Body>

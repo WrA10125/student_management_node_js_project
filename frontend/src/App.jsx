@@ -17,10 +17,24 @@ function App() {
   }, []);
 
   return (
-    <Container className="mt-3 h-100 w-100">
-      <h2 className="text-center text-success opacity-100">Student Management System</h2>
-      <StudentList students={students} refreshStudents={fetchStudents} />
-      <></>
+    // <Container className="mt-3 h-100 w-100">
+    //   <h2 className="text-center text-success opacity-100">Student Management System</h2>
+    //   <StudentList students={students} refreshStudents={fetchStudents} />
+    //   <></>
+    // </Container>
+    <Container fluid className="mt-3">
+      <Row className="justify-content-center">
+        <Col xs={12} sm={10} md={8} lg={6}>
+          <h2 className="text-center text-success">
+            Student Management System
+          </h2>
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={12}>
+          <StudentList students={students} refreshStudents={fetchStudents} />
+        </Col>
+      </Row>
     </Container>
   );
 }

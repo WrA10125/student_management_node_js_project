@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, Container } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { updateMark } from "../api";
 
@@ -22,45 +22,55 @@ const EditMarksForm = ({ show, mark, onClose, onUpdate }) => {
     try {
       await updateMark(mark.id, subject, score);
       Swal.fire("Updated", "Mark updated successfully", "success");
-      onUpdate(); 
-      onClose(); 
+      onUpdate();
+      onClose();
     } catch (error) {
       Swal.fire("Error", error.message || "Failed to update mark", "error");
     }
   };
 
   return (
-    <Modal style={{opacity:"80"}} show={show} onHide={onClose} centered>
+    <Modal show={show} onHide={onClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title
-          style={{ textAlign: "center", color: "green", width: "100%" }}
-        >
+        <Modal.Title className="text-center w-100 text-success">
           Edit Mark
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
-          <Form.Group>
-            <Form.Label>Subject</Form.Label>
-            <Form.Control
-              type="text"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Score</Form.Label>
-            <Form.Control
-              type="number"
-              value={score}
-              min="0"
-              onChange={(e) => setScore(e.target.value)}
-            />
-          </Form.Group>
-          <Button variant="success" className="mt-3" onClick={handleUpdateMark}>
-            Update Mark
-          </Button>
-        </Form>
+        <Container>
+          <Form>
+            <Row>
+              <Col xs={12} sm={12} md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Subject</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    placeholder="Enter subject"
+                  />
+                </Form.Group>
+              </Col>
+              <Col xs={12} sm={12} md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Score</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={score}
+                    min="0"
+                    onChange={(e) => setScore(e.target.value)}
+                    placeholder="Enter score"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <div className="text-center">
+              <Button variant="success" onClick={handleUpdateMark}>
+                Update Mark
+              </Button>
+            </div>
+          </Form>
+        </Container>
       </Modal.Body>
     </Modal>
   );
